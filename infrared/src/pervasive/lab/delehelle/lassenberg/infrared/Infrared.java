@@ -1,24 +1,36 @@
 package pervasive.lab.delehelle.lassenberg.infrared;
 
+import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import com.sun.spot.peripheral.Spot;
 import com.sun.spot.resources.Resources;
-import com.sun.spot.resources.transducers.ISwitch;
-import com.sun.spot.resources.transducers.ISwitchListener;
 import com.sun.spot.resources.transducers.ITriColorLEDArray;
-import com.sun.spot.resources.transducers.SwitchEvent;
 import com.sun.spot.sensorboard.peripheral.InfraRed;
 import com.sun.spot.service.BootloaderListenerService;
 import com.sun.spot.util.Utils;
+import java.io.IOException;
+import javax.microedition.io.Connector;
+import javax.microedition.io.Datagram;
 import javax.microedition.midlet.MIDletStateChangeException;
 
 public class Infrared extends javax.microedition.midlet.MIDlet
 {
 
-    public static final byte[] SAMSUNG_VOL_PLUS = {71, 70, 9, 25, 9, 26, 9, 26, 9, 9, 9, 9, 9, 8, 8, 9, 9, 8, 9, 26, 9, 26, 9, 26, 9, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 26, 9, 26, 9, 26, 9, 9, 9, 8, 9, 8, 9, 8, 9, 9, 9, 9, 9, 8, 9, 8, 9, 26, 9, 26, 9, 26, 9, 25, 10, 26, 9, 26, 9, 8, 9, 8, 9, 9, 8};
-    public static final byte[] SAMSUNG_VOL_MINUS = {71, 70, 9, 26, 9, 26, 9, 26, 9, 8, 9, 8, 9, 8, 9, 8, 9, 9, 9, 26, 9, 26, 9, 26, 9, 9, 9, 9, 9, 9, 9, 8, 9, 8, 9, 26, 9, 26, 9, 8, 9, 26, 9, 9, 9, 9, 9, 8, 9, 9, 9, 9, 9, 9, 9, 26, 9, 9, 8, 26, 9, 26, 9, 26, 9, 26, 9, 26, 9, 9, 9, 9, 9, 8, 9};
-    public static final byte[] SAMSUNG_CHAN_UP = {71, 70, 9, 26, 9, 26, 10, 25, 10, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 26, 9, 26, 9, 25, 9, 8, 9, 8, 10, 8, 9, 8, 9, 8, 9, 8, 9, 26, 9, 8, 9, 8, 9, 26, 9, 8, 9, 8, 9, 8, 9, 25, 9, 8, 9, 26, 9, 25, 9, 8, 9, 26, 9, 26, 9, 26, 9, 26, 10, 8, 9, 9, 9, 8, 9};
-    public static final byte[] SAMSUNG_CHAN_DOWN = {71, 70, 9, 26, 9, 26, 9, 26, 9, 8, 9, 9, 9, 9, 9, 9, 9, 8, 9, 26, 9, 26, 9, 26, 9, 8, 9, 9, 9, 9, 9, 8, 9, 9, 9, 8, 9, 8, 9, 9, 9, 9, 9, 26, 9, 9, 9, 8, 9, 8, 9, 26, 9, 26, 9, 26, 9, 26, 9, 9, 9, 25, 9, 26, 9, 26, 9, 26, 9, 8, 9, 8, 8, 9, 9};
-
+    public static final byte[] SAMSUNG_VOL_PLUS =
+    {
+        71, 70, 9, 25, 9, 26, 9, 26, 9, 9, 9, 9, 9, 8, 8, 9, 9, 8, 9, 26, 9, 26, 9, 26, 9, 8, 9, 9, 9, 9, 9, 9, 9, 9, 9, 26, 9, 26, 9, 26, 9, 9, 9, 8, 9, 8, 9, 8, 9, 9, 9, 9, 9, 8, 9, 8, 9, 26, 9, 26, 9, 26, 9, 25, 10, 26, 9, 26, 9, 8, 9, 8, 9, 9, 8
+    };
+    public static final byte[] SAMSUNG_VOL_MINUS =
+    {
+        71, 70, 9, 26, 9, 26, 9, 26, 9, 8, 9, 8, 9, 8, 9, 8, 9, 9, 9, 26, 9, 26, 9, 26, 9, 9, 9, 9, 9, 9, 9, 8, 9, 8, 9, 26, 9, 26, 9, 8, 9, 26, 9, 9, 9, 9, 9, 8, 9, 9, 9, 9, 9, 9, 9, 26, 9, 9, 8, 26, 9, 26, 9, 26, 9, 26, 9, 26, 9, 9, 9, 9, 9, 8, 9
+    };
+    public static final byte[] SAMSUNG_CHAN_UP =
+    {
+        71, 70, 9, 26, 9, 26, 10, 25, 10, 8, 9, 8, 9, 8, 9, 8, 9, 8, 9, 26, 9, 26, 9, 25, 9, 8, 9, 8, 10, 8, 9, 8, 9, 8, 9, 8, 9, 26, 9, 8, 9, 8, 9, 26, 9, 8, 9, 8, 9, 8, 9, 25, 9, 8, 9, 26, 9, 25, 9, 8, 9, 26, 9, 26, 9, 26, 9, 26, 10, 8, 9, 9, 9, 8, 9
+    };
+    public static final byte[] SAMSUNG_CHAN_DOWN =
+    {
+        71, 70, 9, 26, 9, 26, 9, 26, 9, 8, 9, 9, 9, 9, 9, 9, 9, 8, 9, 26, 9, 26, 9, 26, 9, 8, 9, 9, 9, 9, 9, 8, 9, 9, 9, 8, 9, 8, 9, 9, 9, 9, 9, 26, 9, 9, 9, 8, 9, 8, 9, 26, 9, 26, 9, 26, 9, 26, 9, 9, 9, 25, 9, 26, 9, 26, 9, 26, 9, 8, 9, 8, 8, 9, 9
+    };
 
     // some commands from the Apple IR Remote
     public static final long APPLE_PLUS = 0x087ee110bL;  // Apple custom code ID = 0x87EE
@@ -54,8 +66,6 @@ public class Infrared extends javax.microedition.midlet.MIDlet
         return USE_TV_CMDS ? NEC_VOL_MINUS : APPLE_MINUS;
     }
 
-
-    
     // IR receive methods
     private static final boolean DISPLAY_IR_TIMING = false;
 
@@ -73,32 +83,22 @@ public class Infrared extends javax.microedition.midlet.MIDlet
 
     private void increaseVolume()
     {
-        lastCommand = 1;
         ir.writeIR(SAMSUNG_VOL_PLUS);
-        if (volume < 8)
-        {
-            volume++;
-            System.out.println("Volume increased to " + volume);
-        }
-        else
-        {
-            System.out.println("Volume already at maximum");
-        }
     }
 
     private void decreaseVolume()
     {
         ir.writeIR(SAMSUNG_VOL_MINUS);
-        lastCommand = 2;
-        if (volume > 0)
-        {
-            volume--;
-            System.out.println("Volume decreased to " + volume);
-        }
-        else
-        {
-            System.out.println("Volume already at minimum");
-        }
+    }
+    
+    private void increaseChannel()
+    {
+        ir.writeIR(SAMSUNG_CHAN_UP);
+    }
+
+    private void decreaseChannel()
+    {
+        ir.writeIR(SAMSUNG_CHAN_DOWN);
     }
 
     private boolean isAppleRemote(long word)
@@ -114,17 +114,21 @@ public class Infrared extends javax.microedition.midlet.MIDlet
 
     private boolean compare(byte[] val, byte[] reference)
     {
-        if(reference.length != val.length)
+        if (reference.length != val.length)
         {
             System.out.println("Not the same length: " + val.length + " vs. " + reference.length);
             return false;
         }
-        
+
         boolean OK = true;
         for (int i = 0; i < val.length; i++)
+        {
             if (Math.abs(reference[i] - val[i]) >= 2)
+            {
                 OK = false;
-        
+            }
+        }
+
         return OK;
     }
 
@@ -142,17 +146,29 @@ public class Infrared extends javax.microedition.midlet.MIDlet
             {
                 if (isSamsung(val)) // Then it's a damned Samsung
                 {
-                    if(compare(val, SAMSUNG_VOL_MINUS))
+                    if (compare(val, SAMSUNG_VOL_MINUS))
+                    {
                         decreaseVolume();
-                    else if(compare(val, SAMSUNG_VOL_PLUS))
+                    }
+                    else if (compare(val, SAMSUNG_VOL_PLUS))
+                    {
                         increaseVolume();
-                    else if(compare(val, SAMSUNG_CHAN_UP))
+                    }
+                    else if (compare(val, SAMSUNG_CHAN_UP))
+                    {
                         System.out.println("Channel up");
-                    else if(compare(val, SAMSUNG_CHAN_DOWN))
+                    }
+                    else if (compare(val, SAMSUNG_CHAN_DOWN))
+                    {
                         System.out.println("Channel down");
+                    }
                     else
+                    {
                         for (int i = 0; i < val.length; i++)
+                        {
                             System.out.print(val[i] + " ");
+                        }
+                    }
                 }
                 else
                 {
@@ -234,7 +250,6 @@ public class Infrared extends javax.microedition.midlet.MIDlet
         }
     }
 
-    
     // SONY format
     public static final int SONY_INITIAL_HEADER = (2470 + 63) / 64;
     public static final int SONY_OFF = (556 + 63) / 64;
@@ -338,13 +353,68 @@ public class Infrared extends javax.microedition.midlet.MIDlet
         }
 
         leds = (ITriColorLEDArray) Resources.lookup(ITriColorLEDArray.class);
+        startReceiverThread();
+    }
 
-        while (true)
+    public void startReceiverThread()
+    {
+        new Thread()
         {
-            displayVolume();
-            //readIRSensor();
-            decreaseVolume();
-        }
+            public void run()
+            {
+                int tmp = -1;
+                RadiogramConnection dgConnection = null;
+                Datagram dg = null;
+
+                try
+                {
+                    dgConnection = (RadiogramConnection) Connector.open("radiogram://:10");
+                    dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
+                }
+                catch (IOException e)
+                {
+                    System.out.println("Could not open radiogram receiver connection");
+                    e.printStackTrace();
+                    return;
+                }
+
+                System.out.println("Connection ready");
+                while (true)
+                {
+                    try
+                    {
+                        dg.reset();
+                        System.out.println("Reading...");
+                        dgConnection.receive(dg);
+                        tmp = dg.readInt();
+                        System.out.println("Received: " + tmp + " from " + dg.getAddress());
+                        switch(tmp)
+                        {
+                            case 10:
+                                decreaseChannel();
+                                break;
+                                
+                            case 20:
+                                increaseChannel();
+                                break;
+                                
+                            case 30:
+                                increaseVolume();
+                                break;
+                                
+                            case 40:
+                                decreaseVolume();
+                                break;
+                        }
+                        increaseVolume();
+                    }
+                    catch (IOException e)
+                    {
+                        System.out.println("Nothing received");
+                    }
+                }
+            }
+        }.start();
     }
 
     protected void pauseApp()
