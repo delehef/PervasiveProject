@@ -31,32 +31,35 @@ public class Remote
             double xAcceleration = accelerometer.getAccelX();
             double zAcceleration = accelerometer.getAccelZ();
 
-            if (xAcceleration > threshold)
+            if (Math.abs(xAcceleration) > Math.abs(zAcceleration))
             {
-                System.out.println("Gauche");
-                sendMessage(10);
-                Thread.sleep(500);
+                if (xAcceleration > threshold)
+                {
+                    System.out.println("Gauche");
+                    sendMessage(10);
+                    Thread.sleep(500);
+                }
+                else if (xAcceleration < -threshold)
+                {
+                    System.out.println("Droite");
+                    sendMessage(20);
+                    Thread.sleep(500);
+                }
             }
-
-            if (xAcceleration < -threshold)
+            else if (Math.abs(xAcceleration) <= Math.abs(zAcceleration))
             {
-                System.out.println("Droite");
-                sendMessage(20);
-                Thread.sleep(500);
-            }
-
-            if (zAcceleration > threshold + 0.5)
-            {
-                System.out.println("V+");
-                sendMessage(30);
-                Thread.sleep(500);
-            }
-
-            if (zAcceleration < -threshold)
-            {
-                System.out.println("V-");
-                sendMessage(40);
-                Thread.sleep(500);
+                if (zAcceleration > threshold + 0.5)
+                {
+                    System.out.println("V+");
+                    sendMessage(30);
+                    Thread.sleep(500);
+                }
+                else if (zAcceleration < -threshold)
+                {
+                    System.out.println("V-");
+                    sendMessage(40);
+                    Thread.sleep(500);
+                }
             }
         }
         catch (Exception e)
