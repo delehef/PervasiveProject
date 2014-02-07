@@ -25,18 +25,24 @@ public class TcpSerialProxy {
             InputStream inFromClient = null;
             OutputStream outToClient = null;
             try {
-                System.out.println("Waiting for a connection...");
+                // Wait for a client
                 Socket connectionSocket = serverSocket.accept();
+                
+                // Connect the pipes
                 inFromClient = connectionSocket.getInputStream();
                 outToClient = connectionSocket.getOutputStream();
+                
+                // Try to read a command
                 int command = inFromClient.read();
-                if(command == -1)
+                if(command == -1) // Nothing to read
                     continue;
+                
+                // Send it through serial port
                 System.out.println("Received: " + command);
-                System.out.println("Port opened: " + serialPort.openPort());
-                System.out.println("Params setted: " + serialPort.setParams(9600, 8, 1, 0));
-                System.out.println((byte)command + " successfully writen to port: " + serialPort.writeByte((byte) command));
-                System.out.println("Port closed: " + serialPort.closePort());
+                serialPort.openPort();
+                serialPort.setParams(9600, 8, 1, 0);
+                serialPort.writeByte((byte) command);
+                serialPort.closePort();
                 outToClient.write("CCTVVMB".getBytes());
             } catch (IOException ex) {
                 Logger.getLogger(TcpSerialProxy.class.getName()).log(Level.SEVERE, null, ex);
@@ -44,8 +50,10 @@ public class TcpSerialProxy {
                 System.out.println(ex);
             } finally {
                 try {
+                    serialPort.closePort();
                     inFromClient.close();
-                } catch (IOException ex) {
+                    outToClient.close();
+                } catch (SerialPortException | IOException ex) {
                     Logger.getLogger(TcpSerialProxy.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
