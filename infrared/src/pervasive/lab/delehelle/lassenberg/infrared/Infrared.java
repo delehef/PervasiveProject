@@ -82,18 +82,22 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
 
     private void increaseVolume() {
         ir.writeIR(SAMSUNG_VOL_PLUS);
+        writeSONY(SONY_VOL_PLUS);
     }
 
     private void decreaseVolume() {
         ir.writeIR(SAMSUNG_VOL_MINUS);
+        writeSONY(SONY_VOL_MINUS);
     }
 
     private void increaseChannel() {
         ir.writeIR(SAMSUNG_CHAN_UP);
+        writeSONY(SONY_CHAN_UP);
     }
 
     private void decreaseChannel() {
         ir.writeIR(SAMSUNG_CHAN_DOWN);
+        writeSONY(SONY_CHAN_DOWN);
     }
 
     private boolean isAppleRemote(long word) {
