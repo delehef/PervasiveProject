@@ -6,3 +6,5 @@ remote/build
 remote/j2meclasses
 remote/suite
 /TcpSerialProxy/nbproject/private/
+/TcpSerialProxy/build/
+/TcpSerialProxy/dist/

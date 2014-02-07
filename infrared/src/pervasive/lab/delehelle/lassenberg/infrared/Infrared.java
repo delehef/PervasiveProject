@@ -3,8 +3,11 @@ package pervasive.lab.delehelle.lassenberg.infrared;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import com.sun.spot.peripheral.Spot;
 import com.sun.spot.resources.Resources;
+import com.sun.spot.resources.transducers.ITriColorLED;
 import com.sun.spot.resources.transducers.ITriColorLEDArray;
+import com.sun.spot.sensorboard.EDemoBoard;
 import com.sun.spot.sensorboard.peripheral.InfraRed;
+import com.sun.spot.sensorboard.peripheral.LEDColor;
 import com.sun.spot.util.Utils;
 import java.io.IOException;
 import java.io.InputStream;
@@ -285,7 +288,10 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
                 final char VOLUME_DOWN = 1;
                 final char CHAN_UP = 2;
                 final char CHAN_DOWN = 3;
-                
+
+                ITriColorLED[] leds = EDemoBoard.getInstance().getLEDs();
+                leds[0].setColor(LEDColor.RED);
+
                 OutputStream output = null;
                 InputStream input = null;
                 try {
@@ -294,7 +300,12 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
                     int command;
                     while (true) {
                         command = input.read();
-                        switch((char)command){
+                        leds[0].setOn();
+                        Utils.sleep(100);
+                        leds[0].setOff();
+                        Utils.sleep(100);
+                        System.out.println("Received command" + command);
+                        switch ((char) command) {
                             case VOLUME_UP:
                                 increaseVolume();
                                 break;
@@ -302,7 +313,7 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
                             case VOLUME_DOWN:
                                 decreaseVolume();
                                 break;
-                            
+
                             case CHAN_UP:
                                 increaseChannel();
                                 break;
@@ -312,9 +323,9 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
                                 break;
                         }
 
-                        output.write(outString.getBytes());
-                        output.flush();
-                        output.close();
+                        /*output.write(outString.getBytes());
+                         output.flush();
+                         output.close();*/
                     }
                 } catch (IOException e) {
                     System.out.println("Error initializing USB: " + e.getMessage());
