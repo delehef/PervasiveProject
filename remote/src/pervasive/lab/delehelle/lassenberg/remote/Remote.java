@@ -31,7 +31,7 @@ public class Remote
             double xAcceleration = accelerometer.getAccelX();
             double zAcceleration = accelerometer.getAccelZ();
 
-            if (Math.abs(xAcceleration) > Math.abs(zAcceleration))
+            if (Math.abs(xAcceleration) >= Math.abs(zAcceleration))
             {
                 if (xAcceleration > threshold)
                 {
@@ -46,7 +46,7 @@ public class Remote
                     Thread.sleep(500);
                 }
             }
-            else if (Math.abs(xAcceleration) <= Math.abs(zAcceleration))
+            else if (Math.abs(xAcceleration) < Math.abs(zAcceleration))
             {
                 if (zAcceleration > threshold + 0.5)
                 {
