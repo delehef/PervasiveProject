@@ -1,5 +1,6 @@
 package pervasive.lab.delehelle.lassenberg.infrared;
 
+import com.sun.spot.io.j2me.radiogram.Radiogram;
 import com.sun.spot.io.j2me.radiogram.RadiogramConnection;
 import com.sun.spot.peripheral.Spot;
 import com.sun.spot.resources.Resources;
@@ -57,7 +58,19 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
 
     private InfraRed ir;
     private ITriColorLEDArray leds;
+    
+    private long currentShift = 0;
+    private long currentTime = 0;
 
+    private int RSSI(long time)
+    {
+        return (int)(60.0f*1.0f/(0.02f*time+0.5f) - 60.0f);
+    }
+    
+    private long reverseRSSI(int rssi)
+    {
+        return (long)(1.0/0.02*(1/(((double)rssi)/60.0 + 1)-0.5));
+    }
     // IR transmit methods
     private long getPlusCmd() {
         return USE_TV_CMDS ? NEC_VOL_PLUS : APPLE_PLUS;
@@ -342,12 +355,12 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
     public void startReceiverThread() {
         new Thread() {
             public void run() {
-                int tmp = -1;
+                int tmp;
                 RadiogramConnection dgConnection = null;
                 Datagram dg = null;
 
                 try {
-                    dgConnection = (RadiogramConnection) Connector.open("radiogram://:10");
+                    dgConnection = (RadiogramConnection)Connector.open("radiogram://:10");
                     dg = dgConnection.newDatagram(dgConnection.getMaximumLength());
                 } catch (IOException e) {
                     System.out.println("Could not open radiogram receiver connection");
@@ -362,7 +375,24 @@ public class Infrared extends javax.microedition.midlet.MIDlet {
                         System.out.println("Reading...");
                         dgConnection.receive(dg);
                         tmp = dg.readInt();
-                        System.out.println("Received: " + tmp + " from " + dg.getAddress());
+                        int rssi = ((Radiogram)dg).getRssi();
+                        int targetRSSI = RSSI(currentShift + (System.currentTimeMillis()-currentTime)/1000);
+                        System.out.println("Received: " + tmp
+                                + " from " + dg.getAddress()
+                                + " - RSSI: " + rssi
+                                + " - targetRSSI: " + targetRSSI
+                                + " - reverse RSSI: " + reverseRSSI(rssi)
+                                + " - elapsed time: " + (System.currentTimeMillis() - currentTime)/1000
+                                + " - time: " + currentShift + (System.currentTimeMillis()-currentTime)/1000
+                        );
+                        if (rssi<=targetRSSI) {
+                            continue;
+                        } else{
+                            currentTime = System.currentTimeMillis();
+                            currentShift =  reverseRSSI(rssi);
+                        }
+                        
+
                         switch (tmp) {
                             case 10:
                                 decreaseChannel();
