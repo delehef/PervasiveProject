@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Button
+        android:onClick="volUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Volume +"
+        android:id="@+id/vplus_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:onClick="chanDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chan -"
+        android:id="@+id/chanmin_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/vminus_button"
+        android:layout_below="@+id/vplus_button" />
+
+    <Button
+        android:onClick="chanUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chan +"
+        android:id="@+id/chanplus_button"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/vminus_button"
+        android:layout_below="@+id/vplus_button" />
+
+    <Button
+        android:onClick="volDown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Volume -"
+        android:id="@+id/vminus_button"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>
